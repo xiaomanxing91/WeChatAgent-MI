@@ -1,0 +1,12 @@
+{
+  "id": "native-search",
+  "name": "联网搜索",
+  "version": "1.3.0",
+  "apiVersion": 1,
+  "description": "根据当前对话按需检索公开资料，无需提供网址；沿用现有联网开关和聊天范围。",
+  "host": "dsh",
+  "builtin": true,
+  "enabledByDefault": false,
+  "permissions": ["web_fetch"],
+  "tools": ["web_search"]
+}

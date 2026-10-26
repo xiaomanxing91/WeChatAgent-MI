@@ -1,0 +1,12 @@
+{
+  "id": "web-reader",
+  "name": "网页阅读",
+  "version": "1.0.0",
+  "apiVersion": 1,
+  "description": "读取用户提供的公开网页正文，供当前模型总结、解释和提取信息。",
+  "host": "dsh",
+  "builtin": true,
+  "enabledByDefault": true,
+  "permissions": ["web_fetch"],
+  "tools": ["web_reader_read"]
+}

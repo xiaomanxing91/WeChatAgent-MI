@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "runtime": {
+    "python": "python",
+    "dshDesktop": "",
+    "weflowMode": "nt",
+    "sender": "wechat-hook"
+  },
+  "hook": {
+    "baseUrl": "http://127.0.0.1:30001",
+    "expectedVersion": "4.1.10.27",
+    "wechatExecutable": "state/hook/wechat-4.1.10.27/Weixin.exe",
+    "requestTimeoutMs": 5000,
+    "receiptTimeoutMs": 18000,
+    "maxConcurrentSends": 4
+  },
+  "ports": {
+    "weflow": 5031,
+    "onebot": 11229,
+    "adapter": 8766,
+    "dshPlugin": 11230
+  },
+  "account": {
+    "nicknames": [
+      "小助手"
+    ]
+  },
+  "wechat": {
+    "whitelist": {
+      "groups": [],
+      "private": []
+    },
+    "wake_mode": "hybrid",
+    "wake_words": [
+      "小助手"
+    ],
+    "media": {
+      "allowStickerCdn": false,
+      "allowStickerCdnAlias": false
+    },
+    "stickers": {
+      "enabled": true,
+      "labelCache": true,
+      "chats": {},
+      "collectEnabled": true,
+      "shareEnabled": true
+    },
+    "search": {
+      "enabled": false,
+      "provider": "auto",
+      "cache": true,
+      "maxResults": 3,
+      "maxSnippetChars": 1200,
+      "maxSearchesPerTurn": 1,
+      "timeoutMs": 20000,
+      "cacheTtlSeconds": 900,
+      "chats": {}
+    },
+    "proactive": {
+      "enabled": false,
+      "mode": "mixed",
+      "intervalMinutes": 240,
+      "idleMinutes": 120,
+      "startTime": "09:00",
+      "endTime": "22:00",
+      "jitterMinutes": 15,
+      "useSearch": true,
+      "greetOnStart": false,
+      "greetCooldownHours": 12,
+      "chats": {}
+    },
+    "continuation": {
+      "enabled": false,
+      "delayMs": 6000,
+      "jitterMs": 3000,
+      "chats": {}
+    },
+    "context": {
+      "enabled": false,
+      "maxTokens": 100000,
+      "idleSeconds": 60,
+      "chats": {}
+    },
+    "webReader": {
+      "enabled": true
+    },
+    "chatModes": {},
+    "dshAccess": {
+      "chats": {}
+    },
+    "memberMemory": {
+      "enabled": true,
+      "chats": {}
+    },
+    "imageGen": {
+      "enabled": false,
+      "provider": "sdwebui",
+      "baseUrl": "http://127.0.0.1:7860",
+      "model": "",
+      "clipModel": "",
+      "vaeModel": "",
+      "negativePrompt": "",
+      "width": 1024,
+      "height": 1024,
+      "steps": 24,
+      "cfgScale": 7,
+      "sampler": "DPM++ 2M Karras",
+      "timeoutMs": 90000,
+      "maxPerTurn": 1,
+      "chats": {}
+    }
+  },
+  "persona": {
+    "default": "示例助手",
+    "chats": {}
+  },
+  "social": {
+    "batch_ms": 3000,
+    "min_interval_ms": 15000,
+    "private_min_interval_ms": 1000,
+    "max_per_minute": 3,
+    "max_per_ten_minutes": 10
+  },
+  "dsh": {
+    "provider": "deepseek-account",
+    "model": "deepseek-flash"
+  }
+}

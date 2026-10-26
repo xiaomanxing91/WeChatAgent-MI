@@ -1,0 +1,9 @@
+{
+  "name": "wechatagent",
+  "productName": "WeChatAgent",
+  "version": "0.3.7",
+  "description": "WeChatAgent desktop console",
+  "main": "main.cjs",
+  "author": "WeChatAgent contributors",
+  "license": "SEE THIRD-PARTY-NOTICES.txt"
+}

@@ -1,0 +1,31 @@
+# ---- Dependencies (install via npm) ----
+node_modules/
+**/node_modules/
+
+# ---- Native build artifacts / binaries ----
+*.dll
+*.exe
+*.bin
+*.so
+*.node
+*.lib
+*.obj
+*.o
+*.a
+*.pyd
+*.whl
+
+# ---- Runtime state & local secrets (never commit) ----
+state/
+**/state/
+config/wechatagent.json
+*.local
+
+# ---- Backups / transient ----
+*.bak
+*.bak-*
+*.tmp
+
+# ---- OS ----
+.DS_Store
+Thumbs.db

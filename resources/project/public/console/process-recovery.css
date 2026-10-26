@@ -1,0 +1,14 @@
+.process-recovery-modal{width:min(700px,calc(100vw - 32px))}
+.process-list{display:grid;gap:10px;max-height:44vh;overflow-y:auto;overscroll-behavior:contain}
+.process-row{display:flex;align-items:flex-start;gap:12px;padding:14px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);font-size:12px;line-height:1.7}
+label.process-row{cursor:pointer}
+.process-row input{flex:none;width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.process-row>div{min-width:0}
+.process-row strong,.process-row span,.process-row code{display:block}
+.process-row strong .subtle{display:inline;margin-left:8px}
+.process-row code{overflow-wrap:anywhere;white-space:normal;color:var(--muted);font:11px/1.7 var(--mono);margin-top:5px}
+.button.danger{color:var(--error);border-color:var(--error)}
+.button.danger:hover:not(:disabled){background:var(--error);color:white}
+.process-recovery-card{margin-top:20px}
+.process-recovery-card .card-description{margin-bottom:14px}
+@media(max-width:560px){.process-recovery-modal .modal-actions{flex-wrap:wrap}.process-recovery-modal .modal-actions .button{min-height:44px;flex:1}.job-footer{align-items:flex-start;gap:8px;flex-wrap:wrap}}

@@ -1,0 +1,7 @@
+WeChatAgent 0.3.7
+
+Redistribution authorization for the bundled WeChat client, WeChat-Hook and DSH components was confirmed by the maintainer on 2026-10-05. This statement does not replace their respective license terms.
+
+Bundled components: Electron, Node.js, Python 3.13.16, SQLCipher Python binding, cryptography, zstandard, pycryptodome, Pillow, imageio-ffmpeg, cffi, pycparser, MIT weflow-cli NT reader sources, MIT Social Bridge sources and local DSH plugin.
+
+Python and wheel licenses are retained in runtime/python and its site-packages/*.dist-info directories. Electron/Chromium and vendor notices are retained with their programs. Refer to project/LICENSES.md for source attribution and license boundaries. No account, credential, chat or whitelist data is included. Maintainer-authorized persona files are included as presets.
