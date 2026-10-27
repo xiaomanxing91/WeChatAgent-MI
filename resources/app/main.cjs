@@ -11,7 +11,7 @@ app.commandLine.appendSwitch('no-sandbox');
 app.disableHardwareAcceleration();
 app.setAppUserModelId('local.wechatagent.desktop');
 const installedDistribution = app.isPackaged && fs.existsSync(path.join(process.resourcesPath, 'project', 'deployment.json'));
-const deploymentHome = process.env.WECHATAGENT_TEST_DATA_HOME || path.join(app.getPath('appData'), 'WeChatAgent MI');
+const deploymentHome = process.env.WECHATAGENT_TEST_DATA_HOME || path.join(app.getPath('appData'), 'WeChatAgent');
 let deployment = null;
 const root = installedDistribution ? path.join(deploymentHome, 'workspace') : projectDirectory(process.resourcesPath, __dirname, app.isPackaged);
 const dataDirectory = path.join(root, 'state', 'desktop');

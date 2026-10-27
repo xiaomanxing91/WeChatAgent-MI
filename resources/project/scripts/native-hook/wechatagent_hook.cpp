@@ -311,9 +311,9 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
         }
         return true;
     };
-    server.Get("/WeChatAgentMI/health", [authorized](const httplib::Request& req, httplib::Response& res) {
+    server.Get("/WeChatAgent/health", [authorized](const httplib::Request& req, httplib::Response& res) {
         if (!authorized(req, res)) return;
-        json data = {{"backend", "wechat-hook"}, {"integration", "WeChatAgentMI-1"},
+        json data = {{"backend", "wechat-hook"}, {"integration", "WeChatAgent-1"},
             {"version", CoreVersion()}, {"pid", GetCurrentProcessId()}, {"databaseAccounts", DatabaseAccounts()}, {"nativeStickerSend",StickerReady()},{"nativeImageSend",true},
             {"initialization", "deferred-module-v1"}, {"startupState", WeChatAgentMIInitState()}};
         res.set_content(data.dump(), "application/json");
@@ -321,7 +321,7 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
     server.Post("/SendStickerMsg",[authorized](const httplib::Request& req,httplib::Response& res){
         if(!authorized(req,res))return;
         try{
-            auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgentMI-Account");
+            auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgent-Account");
             if(CoreVersion()!="4.1.10.27" || accounts.size()!=1 || !accounts.count(account)){
                 res.status=409;res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}","application/json");return;
             }
@@ -351,9 +351,9 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
             res.set_content(accepted?"{\"ret\":0,\"retmsg\":\"accepted\"}":"{\"ret\":1,\"error\":\"Native sticker rejected\"}","application/json");
         }catch(...){res.status=400;res.set_content("{\"ret\":1,\"error\":\"Invalid sticker request\"}","application/json");}
     });
-    server.Post("/WeChatAgentMI/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
+    server.Post("/WeChatAgent/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
         if(!authorized(req,res))return;
-        auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgentMI-Account");
+        auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgent-Account");
         if(CoreVersion()!="4.1.10.27" || accounts.size()!=1 || !accounts.count(account)){res.status=409;res.set_content("{}","application/json");return;}
         try {
             auto data=json::parse(req.body);auto target=data.value("wxidorgid","");auto mode=data.value("mode","");
@@ -363,7 +363,7 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
             res.set_content(WeChatAgentMISticker::TraceJson(),"application/json");
         }catch(...){res.status=400;res.set_content("{}","application/json");}
     });
-    server.Get("/WeChatAgentMI/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
+    server.Get("/WeChatAgent/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
         if(!authorized(req,res))return;
         res.set_content(WeChatAgentMISticker::TraceJson(),"application/json");
     });
@@ -374,7 +374,7 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
         if (!authorized(req, res)) return;
         try {
             auto accounts = DatabaseAccounts();
-            std::string account = req.get_header_value("X-WeChatAgentMI-Account");
+            std::string account = req.get_header_value("X-WeChatAgent-Account");
             if (CoreVersion() != "4.1.10.27" || account.empty() || accounts.size() != 1 || !accounts.count(account)) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}", "application/json"); return;
             }
@@ -417,7 +417,7 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
         if (!authorized(req, res)) return;
         try {
             auto accounts = DatabaseAccounts();
-            std::string account = req.get_header_value("X-WeChatAgentMI-Account");
+            std::string account = req.get_header_value("X-WeChatAgent-Account");
             if (CoreVersion() != "4.1.10.27" || account.empty() || accounts.size() != 1 || !accounts.count(account)) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}", "application/json"); return;
             }
@@ -467,7 +467,7 @@ void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
         if (!authorized(req, res)) return;
         try {
             auto accounts = DatabaseAccounts();
-            std::string account = req.get_header_value("X-WeChatAgentMI-Account");
+            std::string account = req.get_header_value("X-WeChatAgent-Account");
             if (CoreVersion() != "4.1.10.27" || account.empty() || accounts.size() != 1 || !accounts.count(account)) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}", "application/json"); return;
             }

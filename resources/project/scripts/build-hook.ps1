@@ -68,5 +68,5 @@ if ((Test-Path -LiteralPath $previousDll) -and (Test-Path -LiteralPath $previous
     Copy-Item -LiteralPath $previousManifest -Destination (Join-Path $output 'build.previous.json') -Force
 }
 Copy-Item -LiteralPath $dll -Destination (Join-Path $output 'version.dll') -Force
-@{ upstream='https://github.com/aixed/WeChat-Hook'; commit=$commit; targetVersion='4.1.10.27'; integration='WeChatAgentMI-1'; initialization='deferred-module-v1'; moduleWaitTimeoutMs=30000; sha256=(Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash.ToLowerInvariant() } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'build.json') -Encoding UTF8
+@{ upstream='https://github.com/aixed/WeChat-Hook'; commit=$commit; targetVersion='4.1.10.27'; integration='WeChatAgent-1'; initialization='deferred-module-v1'; moduleWaitTimeoutMs=30000; sha256=(Get-FileHash -LiteralPath $dll -Algorithm SHA256).Hash.ToLowerInvariant() } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'build.json') -Encoding UTF8
 Write-Output 'Native sender compiled: state/hook/native/version.dll (loopback, token, account/version checks).'

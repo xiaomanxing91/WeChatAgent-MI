@@ -14,7 +14,7 @@
 import sys, os, json, asyncio, wave, tempfile, hashlib, argparse
 
 DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
-DEFAULT_ROOT = r"C:\Users\star\AppData\Roaming\WeChatAgent MI\workspace"
+DEFAULT_ROOT = r"C:\Users\star\AppData\Roaming\WeChatAgent\workspace"
 
 
 def tts_mp3(text: str, voice: str) -> bytes:

@@ -140,7 +140,7 @@ def download_sticker(value, deadline, opener=None):
         remaining = deadline - time.monotonic()
         if remaining <= 0:
             raise TimeoutError()
-        request = urllib.request.Request(url, headers={'User-Agent': 'WeChatAgentMI/0.1'})
+        request = urllib.request.Request(url, headers={'User-Agent': 'WeChatAgent/0.1'})
         with opener.open(request, timeout=min(8, remaining)) as response:
             if response.status != 200:
                 raise ValueError()

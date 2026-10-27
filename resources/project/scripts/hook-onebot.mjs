@@ -87,7 +87,7 @@ export class HookOneBot {
     return this.json(this.hook.baseUrl, route, {
       method: body === undefined ? 'GET' : 'POST',
       headers: { Authorization: 'Bearer ' + this.nativeToken, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-        ...(account ? { 'X-WeChatAgentMI-Account': account } : {}) },
+        ...(account ? { 'X-WeChatAgent-Account': account } : {}) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     }, this.hook.requestTimeoutMs ?? 5000);
   }
@@ -96,7 +96,7 @@ export class HookOneBot {
     const reader = await this.reader('/api/v1/reader/status');
     if (reader.backend !== 'weflow-cli-nt' || !reader.ownWxid || !reader.accountDirectory) fail('READER_ACCOUNT_METADATA_REQUIRED');
     this.ownWxid = reader.ownWxid;
-    const native = await this.native('/WeChatAgentMI/health').catch(error => {
+    const native = await this.native('/WeChatAgent/health').catch(error => {
       if(error instanceof AdapterError)throw error;
       const code=error?.cause?.code??error?.code;
       if(code==='ECONNREFUSED')fail('HOOK_NOT_LISTENING');
@@ -108,7 +108,7 @@ export class HookOneBot {
     this.status.native_image_send = native.nativeImageSend!==false;
     this.status.native_voice_send = native.nativeVoiceSend!==false;
     this.status.hook_connected = true; this.status.version = native.version ?? '';
-    if (native.integration !== 'WeChatAgentMI-1' || native.backend !== 'wechat-hook') fail('REVIEWED_HOOK_BUILD_REQUIRED');
+    if (native.integration !== 'WeChatAgent-1' || native.backend !== 'wechat-hook') fail('REVIEWED_HOOK_BUILD_REQUIRED');
     if (native.version !== this.hook.expectedVersion || native.version !== '4.1.10.27') fail('HOOK_VERSION_MISMATCH');
     if (!Array.isArray(native.databaseAccounts) || native.databaseAccounts.length !== 1 ||
         native.databaseAccounts[0] !== reader.accountDirectory.toLowerCase()) fail('HOOK_ACCOUNT_NOT_READY');
