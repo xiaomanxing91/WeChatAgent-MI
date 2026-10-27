@@ -3,10 +3,12 @@
 > 源码归档仓库（GitHub-ready）。本目录包含 WeChatAgent MI 桌面端助手的**全部可编辑源码**，
 > 含原生文字 / 表情包 / **图片** / **原生语音发送** 等全部当前功能。
 
+WeChatAgent MI（M：Modeification修改，I：Integration整合）是基于sourcepro5的WeChatAgent项目进行修改的版本，修改的原版本为0.3.7.（原项目地址：https://github.com/sourcepro5/WeChatAgent/）
 WeChatAgent MI 是一个 Windows 桌面 AI 助手：通过注入式原生 Hook（`version.dll`）桥接微信桌面端
 （`Weixin.exe`，已验收版本 `4.1.10.27`），由 Electron 主进程托管控制台与桥接服务，并把社交对话
 交给外部 DSH 智能体（DeepSeek Harness）驱动。用户消息经 OneBot 反向桥接进入社交引擎，模型通过
 工具（含本次新增的原生语音发送工具）产出回复与富媒体，最终由原生 Hook 落地到微信。
+**注意**这里的微信版本锁死 4.1.10.27 ！
 
 ---
 
@@ -41,25 +43,23 @@ WeChatAgent MI version/
         ├── package.json  README.md  LICENSE  LICENSES.md  RELEASE_NOTES.md
 ```
 
-> 未包含（且有意排除，见下文“未包含内容”）：`resources/vendor/`（微信客户端、上游 Hook 预编译 DLL、
-> DSH、Python 运行时，约 1.8G）、`resources/runtime/`（约 230M）、`node_modules/`（依赖，随 `npm install`
-> 生成）、`state/`（运行态与用户数据）、真实 `config/wechatagent.json`（密钥，仅示例入库）。
-
 ---
 
 ## 功能特性
 
 - 好友 / 群聊白名单、人格预设（傲娇助手、德克萨斯、洛奇希等）、独立 DSH 会话。
-- 联网搜索、网页正文阅读、图片理解、表情包管理（本地 50 张池）。
+- 联网搜索（修改了使用bing引擎进行搜索）、网页正文阅读、图片理解（修改了或者说修复了ai阅读原图，目前仅测试了deepseekfash可用，其他模型需自行测试）、表情包管理（本地 50 张池）。
 - 原生文字、图片、表情包发送（经微信原生通道，非文件转发）。
 - **原生语音发送（MI 版本新增）**：模型可调用 `wechat_voice_send` 工具，把文字合成为微信原生
   语音条并发送；送达后即回复文字之后自动落地，群聊与个人均可用。
 - 主动接续回合（轮流互动中自发推进）、上下文压缩、逐聊天开关。
+- 新增本地生图功能，可接入comfyui等本地生图，目前仅测试了comfyui可用。模型可调用 `wechat_image_resend` 工具进行本地生图并发送到微信。
 
 ---
 
 ## 构建与依赖
 
+详细构建可访问原项目
 ### 1. Node 依赖
 DSH 社交插件依赖需本地安装（本仓库不提交 `node_modules`，由 `deployment.json` 引用）：
 
@@ -113,37 +113,6 @@ pip install -r resources/project/scripts/reader-requirements.txt
 
 **跳过覆盖项**（用户态，重启保留）：`state/**`、`roles/**`、`config/wechatagent.json`。
 注意 `deployment.json` **不能带 BOM**（`deployment.cjs:11` 直接 `JSON.parse`，带 BOM 会导致启动失败）。
-
----
-
-## 发布到 GitHub
-
-本目录已是初始化好的 git 仓库（含初始提交）。推送方式：
-
-```powershell
-cd "WeChatAgent MI version"
-git remote add origin <你的仓库地址>
-git branch -M main
-git push -u origin main
-```
-
-`.gitignore` 已排除 `node_modules/`、原生二进制（`*.dll/*.exe/*.bin/...`）、`state/`、
-`config/wechatagent.json`、`*.bak*`。若需提交者署名，请先 `git config user.name/user.email`。
-
----
-
-## 未包含内容（及原因）
-
-| 内容 | 体积 | 原因 |
-| --- | --- | --- |
-| `resources/vendor/` | ~1.8G | 含微信客户端、上游预编译 Hook、DSH、Python 运行时等第三方/二进制资产 |
-| `resources/runtime/` | ~230M | 运行期 Electron 运行时 |
-| `node_modules/` | — | 依赖，随 `npm install` 生成（见 `deployment.json` 引用） |
-| `state/`、`config/wechatagent.json` | — | 运行态与用户密钥，绝不入库 |
-| `*.dll` 等二进制（如 `weflow-cli` 的 `wx_key.dll`） | — | 非源码 / 授权敏感，由构建或上游获取 |
-
-要获得可运行的安装包，仍需维护者用官方构建流程把 `vendor/`、`runtime/` 与编译好的
-`version.dll` 一并打包（GitHub Releases 附件），本源码目录不含安装器。
 
 ---
 
