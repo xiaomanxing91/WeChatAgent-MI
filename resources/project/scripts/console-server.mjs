@@ -166,7 +166,7 @@ export function createConsole({ root = projectRoot, port = 3210, runner, readerS
     const data=await response.json();
     if(!response.ok){
       const messages={STICKER_MANAGER_ACCOUNT_CHANGED:'微信账号已变化，请刷新表情管理页面后重试。',STICKER_MANAGER_CHANGED:'表情池已更新，请刷新列表后重试。',STICKER_MANAGER_BUSY:'已有图片正在导入，请稍后重试。',STICKER_MANAGER_FULL:'表情池已满 50 张，请先删除不需要的表情再添加。',STICKER_MANAGER_TOO_LARGE:'每张图片不能超过 8 MB。',STICKER_MANAGER_INVALID_IMAGE:'图片无效或过大。支持 GIF、PNG、JPG、WebP，最多 64 帧、边长不超过 4096 像素。',STICKER_MANAGER_INVALID:'请检查名称、描述和标签：名称与描述最多 120 字，标签最多 6 个、每个最多 16 字。',STICKER_MANAGER_NOT_FOUND:'这张表情已移除，请刷新列表。',STICKER_MANAGER_INTEGRITY:'图片校验失败，原有表情未修改。'};
-      throw fault(messages[data.error]??(response.status===404?'读取服务尚未加载表情管理功能，请退出重开 WeChatAgent 并重启服务。':'表情管理暂时不可用，请查看读取服务日志。'),[400,404,409,413].includes(response.status)?response.status:503);
+      throw fault(messages[data.error]??(response.status===404?'读取服务尚未加载表情管理功能，请退出重开 WeChatAgent MI 并重启服务。':'表情管理暂时不可用，请查看读取服务日志。'),[400,404,409,413].includes(response.status)?response.status:503);
     }
     return data;
   }
@@ -176,7 +176,7 @@ export function createConsole({ root = projectRoot, port = 3210, runner, readerS
     if (!fs.existsSync(tokenFile)) throw fault('模型连接尚未准备，请先打开 DSH 并启用本项目插件。', 503);
     const token = fs.readFileSync(tokenFile, 'utf8').trim();
     const health = await remote(`http://127.0.0.1:${config.ports.dshPlugin}/health`, token);
-    if (health.project !== 'WeChatAgent' || !sameProjectPath(health.projectRoot,root)) throw fault('DSH 插件连接到其他项目，请启用当前项目插件。', 503);
+    if (health.project !== 'WeChatAgent MI' || !sameProjectPath(health.projectRoot,root)) throw fault('DSH 插件连接到其他项目，请启用当前项目插件。', 503);
     return remote(`http://127.0.0.1:${config.ports.dshPlugin}${route}`, token, 5000);
   }
   function buffered() {
@@ -203,7 +203,7 @@ export function createConsole({ root = projectRoot, port = 3210, runner, readerS
       const readerState = value(0), adapter = value(2), health = value(3);
       const matchesDsh=dshConfigurationMatches(root,snapshot().config,health);
       if(optionalJson(preferenceFile).dshRestartRequired && matchesDsh)atomic(preferenceFile,{...optionalJson(preferenceFile),dshRestartRequired:false});
-      const dshReady = health?.ok === true && health.project === 'WeChatAgent' && sameProjectPath(health.projectRoot,root) && health.contextMode === 'native-session-v1' && health.behaviorPolicy === 'local-config-only-v1' && health.imageInput === 'native-attachment-v1' && (!optionalJson(preferenceFile).dshRestartRequired || matchesDsh);
+      const dshReady = health?.ok === true && health.project === 'WeChatAgent MI' && sameProjectPath(health.projectRoot,root) && health.contextMode === 'native-session-v1' && health.behaviorPolicy === 'local-config-only-v1' && health.imageInput === 'native-attachment-v1' && (!optionalJson(preferenceFile).dshRestartRequired || matchesDsh);
       const readerReady = !!readerState && !!value(1) && !readerState.lastError;
       const bridgeReady = !!value(4) && adapter?.ob_connected === true;
       const hookReady = adapter?.hook_connected === true && adapter?.hook_account_verified === true && adapter?.version === config.hook.expectedVersion;
@@ -374,7 +374,7 @@ export function createConsole({ root = projectRoot, port = 3210, runner, readerS
         if (!assets[route]) return reply(404, { error: '页面不存在。' });
         const [file, type] = assets[route]; return reply(200, fs.readFileSync(path.join(publicDir, file)), type);
       }
-      if (req.method === 'GET' && route === '/api/info') return reply(200, { project: 'WeChatAgent Console', root, version: 1, token: csrf });
+      if (req.method === 'GET' && route === '/api/info') return reply(200, { project: 'WeChatAgent MI Console', root, version: 1, token: csrf });
       if (req.headers['x-console-token'] !== csrf) throw fault('控制台连接已更新，请刷新页面。', 401);
       if (req.method === 'GET' && route === '/api/config') return reply(200, { ...snapshot(), ...optionalJson(preferenceFile) });
       if(req.method==='GET'&&route==='/api/sticker-pool')return reply(200,await reader('/api/v1/stickers/pool-status'));
@@ -581,5 +581,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid console port');
   const app = createConsole({ port });
   await app.start();
-  console.log(`WeChatAgent Console: http://127.0.0.1:${port}`);
+  console.log(`WeChatAgent MI Console: http://127.0.0.1:${port}`);
 }

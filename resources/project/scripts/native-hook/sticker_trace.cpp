@@ -8,7 +8,7 @@
 #include "MinHook.h"
 #include "json.hpp"
 #include "sticker_sender.h"
-namespace WeChatAgentSticker {
+namespace WeChatAgentMISticker {
 namespace {
 using DispatchCall=uintptr_t(*)(uintptr_t,uintptr_t,uintptr_t,bool);
 DispatchCall original=nullptr;

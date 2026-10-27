@@ -38,8 +38,8 @@ static bool StickerReady() {
         return (info.Protect&(PAGE_EXECUTE|PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE_WRITECOPY))!=0;
     };
     if(!inCode(base+offset::send_message) || !inCode(base+offset::create_param2) ||
-      !inCode(base+WeChatAgentSticker::EmojiFactory))return false;
-    const uintptr_t tables[]={WeChatAgentSticker::EmojiOwnerVtable,WeChatAgentSticker::EmojiVtable,offset::param1_vtable,
+      !inCode(base+WeChatAgentMISticker::EmojiFactory))return false;
+    const uintptr_t tables[]={WeChatAgentMISticker::EmojiOwnerVtable,WeChatAgentMISticker::EmojiVtable,offset::param1_vtable,
       offset::param2_1,offset::param2_2,offset::param2_3};
     for(auto offset:tables){
         if(offset+sizeof(uintptr_t)>pe->OptionalHeader.SizeOfImage)return false;
@@ -61,7 +61,7 @@ static bool ForwardSticker(const std::string& target,const std::string& path) {
 // the client store the result as a file message. FileFactory (0x1C4CE70)
 // allocates 0x7A8 bytes, installs the image vtable and runs the real body
 // constructor; we only fill the receiver/path/type fields afterwards.
-namespace WeChatAgentImage {
+namespace WeChatAgentMIImage {
 inline constexpr uintptr_t FileFactory = 0x1C4CE70;
 
 struct UnknownBlock { uint64_t vtable; uint64_t temp[6]; uint64_t self; };
@@ -193,12 +193,12 @@ static bool Send(const std::string& target, const std::string& path) {
 }
 
 static bool ForwardImage(const std::string& target,const std::string& path) {
-    __try { return WeChatAgentImage::Send(target,path); }
+    __try { return WeChatAgentMIImage::Send(target,path); }
     __except(EXCEPTION_EXECUTE_HANDLER) { return false; }
 }
 
 static bool ForwardVoice(const std::string& target,const std::string& silk,uint32_t duration,bool swapArgs,std::string* error) {
-    return WeChatAgentVoice::SendVoiceFile(target,silk,duration,swapArgs,error);
+    return WeChatAgentMIVoice::SendVoiceFile(target,silk,duration,swapArgs,error);
 }
 
 static bool StickerFileMatches(const std::filesystem::path& path,const std::string& md5) {
@@ -295,7 +295,7 @@ static std::set<std::string> DatabaseAccounts() {
     return accounts;
 }
 
-void RegisterWeChatAgentRoutes(httplib::Server& server) {
+void RegisterWeChatAgentMIRoutes(httplib::Server& server) {
     std::ifstream file(std::filesystem::path(ModulePath()).parent_path() / L"wechatagent-hook.token");
     std::string token;
     std::getline(file, token);
@@ -311,17 +311,17 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
         }
         return true;
     };
-    server.Get("/WeChatAgent/health", [authorized](const httplib::Request& req, httplib::Response& res) {
+    server.Get("/WeChatAgentMI/health", [authorized](const httplib::Request& req, httplib::Response& res) {
         if (!authorized(req, res)) return;
-        json data = {{"backend", "wechat-hook"}, {"integration", "WeChatAgent-1"},
+        json data = {{"backend", "wechat-hook"}, {"integration", "WeChatAgentMI-1"},
             {"version", CoreVersion()}, {"pid", GetCurrentProcessId()}, {"databaseAccounts", DatabaseAccounts()}, {"nativeStickerSend",StickerReady()},{"nativeImageSend",true},
-            {"initialization", "deferred-module-v1"}, {"startupState", WeChatAgentInitState()}};
+            {"initialization", "deferred-module-v1"}, {"startupState", WeChatAgentMIInitState()}};
         res.set_content(data.dump(), "application/json");
     });
     server.Post("/SendStickerMsg",[authorized](const httplib::Request& req,httplib::Response& res){
         if(!authorized(req,res))return;
         try{
-            auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgent-Account");
+            auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgentMI-Account");
             if(CoreVersion()!="4.1.10.27" || accounts.size()!=1 || !accounts.count(account)){
                 res.status=409;res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}","application/json");return;
             }
@@ -351,21 +351,21 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
             res.set_content(accepted?"{\"ret\":0,\"retmsg\":\"accepted\"}":"{\"ret\":1,\"error\":\"Native sticker rejected\"}","application/json");
         }catch(...){res.status=400;res.set_content("{\"ret\":1,\"error\":\"Invalid sticker request\"}","application/json");}
     });
-    server.Post("/WeChatAgent/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
+    server.Post("/WeChatAgentMI/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
         if(!authorized(req,res))return;
-        auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgent-Account");
+        auto accounts=DatabaseAccounts();auto account=req.get_header_value("X-WeChatAgentMI-Account");
         if(CoreVersion()!="4.1.10.27" || accounts.size()!=1 || !accounts.count(account)){res.status=409;res.set_content("{}","application/json");return;}
         try {
             auto data=json::parse(req.body);auto target=data.value("wxidorgid","");auto mode=data.value("mode","");
             if(target.size()>256){res.status=400;res.set_content("{}","application/json");return;}
-            bool started=mode=="send"?WeChatAgentSticker::StartSendTrace(target):WeChatAgentSticker::StartTrace(target);
+            bool started=mode=="send"?WeChatAgentMISticker::StartSendTrace(target):WeChatAgentMISticker::StartTrace(target);
             if(!started){res.status=503;res.set_content("{}","application/json");return;}
-            res.set_content(WeChatAgentSticker::TraceJson(),"application/json");
+            res.set_content(WeChatAgentMISticker::TraceJson(),"application/json");
         }catch(...){res.status=400;res.set_content("{}","application/json");}
     });
-    server.Get("/WeChatAgent/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
+    server.Get("/WeChatAgentMI/sticker-trace",[authorized](const httplib::Request& req,httplib::Response& res){
         if(!authorized(req,res))return;
-        res.set_content(WeChatAgentSticker::TraceJson(),"application/json");
+        res.set_content(WeChatAgentMISticker::TraceJson(),"application/json");
     });
     // Local generated images only. Same guards as text: loopback token, single
     // verified account, bounded body, and a canonical path inside the project's
@@ -374,7 +374,7 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
         if (!authorized(req, res)) return;
         try {
             auto accounts = DatabaseAccounts();
-            std::string account = req.get_header_value("X-WeChatAgent-Account");
+            std::string account = req.get_header_value("X-WeChatAgentMI-Account");
             if (CoreVersion() != "4.1.10.27" || account.empty() || accounts.size() != 1 || !accounts.count(account)) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}", "application/json"); return;
             }
@@ -417,11 +417,11 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
         if (!authorized(req, res)) return;
         try {
             auto accounts = DatabaseAccounts();
-            std::string account = req.get_header_value("X-WeChatAgent-Account");
+            std::string account = req.get_header_value("X-WeChatAgentMI-Account");
             if (CoreVersion() != "4.1.10.27" || account.empty() || accounts.size() != 1 || !accounts.count(account)) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}", "application/json"); return;
             }
-            if (!WeChatAgentVoice::Ready()) {
+            if (!WeChatAgentMIVoice::Ready()) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Voice native layout unavailable\"}", "application/json"); return;
             }
             json data = json::parse(req.body);
@@ -445,7 +445,7 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
             }
             std::ifstream input(voice, std::ios::binary);
             std::string silk((std::istreambuf_iterator<char>(input)), {});
-            if (!WeChatAgentVoice::IsSilk(silk)) {
+            if (!WeChatAgentMIVoice::IsSilk(silk)) {
                 res.status = 400; res.set_content("{\"ret\":1,\"error\":\"Not SILK_V3\"}", "application/json"); return;
             }
             std::unique_lock<std::timed_mutex> lock(sendMutex, std::defer_lock);
@@ -458,7 +458,7 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
                 res.status = 500; res.set_content("{\"ret\":1,\"error\":\"" + error + "\"}", "application/json"); return;
             }
             res.set_content("{\"ret\":0,\"retmsg\":\"accepted\",\"duration\":" +
-                std::to_string(WeChatAgentVoice::DurationMs(silk)) + "}", "application/json");
+                std::to_string(WeChatAgentMIVoice::DurationMs(silk)) + "}", "application/json");
         } catch (...) {
             res.status = 500; res.set_content("{\"ret\":1,\"error\":\"Native voice failed\"}", "application/json");
         }
@@ -467,7 +467,7 @@ void RegisterWeChatAgentRoutes(httplib::Server& server) {
         if (!authorized(req, res)) return;
         try {
             auto accounts = DatabaseAccounts();
-            std::string account = req.get_header_value("X-WeChatAgent-Account");
+            std::string account = req.get_header_value("X-WeChatAgentMI-Account");
             if (CoreVersion() != "4.1.10.27" || account.empty() || accounts.size() != 1 || !accounts.count(account)) {
                 res.status = 409; res.set_content("{\"ret\":1,\"error\":\"Version or account mismatch\"}", "application/json"); return;
             }

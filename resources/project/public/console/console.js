@@ -394,7 +394,7 @@ async function renderPage() {
   if (!state.config) return;
   const sequence = ++renderSequence; const page = state.page;
   $('#page-title').textContent = pages[page][0]; $('#breadcrumb-page').textContent = pages[page][0]; $('#page-description').textContent = pages[page][1];
-  document.title = pages[page][0] + ' · WeChatAgent';
+  document.title = pages[page][0] + ' · WeChatAgent MI';
   document.querySelectorAll('[data-page]').forEach(a => page === a.dataset.page ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   let markup;
   try {
@@ -664,15 +664,15 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#modal'
 paintNavigation();
 $('#quit-console').addEventListener('click', () => {
   if (hasDraft()) return toast('请先保存或放弃草稿，再退出控制台。');
-  confirmAction(window.desktop ? '退出应用' : '退出控制台', window.desktop ? '退出 WeChatAgent 桌面应用，微信聊天服务继续运行。下次双击 WeChatAgent.exe 即可重新打开。' : '只关闭本机控制台，微信聊天服务继续运行。下次双击控制台入口即可重新打开。', window.desktop ? '退出应用' : '退出控制台', async () => {
-    try { await api('/api/quit', {}); state.closed = true; $('#connection-label').innerHTML = '<i class="dot"></i>控制台已关闭'; $('#page-body').innerHTML = empty('控制台已关闭', '聊天服务继续运行。需要管理时，重新双击 WeChatAgent-Console.vbs。', '', 'power'); }
+  confirmAction(window.desktop ? '退出应用' : '退出控制台', window.desktop ? '退出 WeChatAgent MI 桌面应用，微信聊天服务继续运行。下次双击 WeChatAgent MI.exe 即可重新打开。' : '只关闭本机控制台，微信聊天服务继续运行。下次双击控制台入口即可重新打开。', window.desktop ? '退出应用' : '退出控制台', async () => {
+    try { await api('/api/quit', {}); state.closed = true; $('#connection-label').innerHTML = '<i class="dot"></i>控制台已关闭'; $('#page-body').innerHTML = empty('控制台已关闭', '聊天服务继续运行。需要管理时，重新双击 WeChatAgent MI-Console.vbs。', '', 'power'); }
     catch (error) { showError(error.message); }
   });
 });
 if (window.desktop) {
   document.body.classList.add('desktop-mode');
   $('.brand span').textContent = '桌面应用';
-  $('.breadcrumb > span:first-of-type').textContent = 'WeChatAgent';
+  $('.breadcrumb > span:first-of-type').textContent = 'WeChatAgent MI';
   $('.version').textContent = '0.3.7 · 关闭窗口收起到托盘';
   $('#quit-console').textContent = '退出应用';
 }

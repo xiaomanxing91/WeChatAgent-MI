@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""WeChatAgent 语音生成器：文本 -> SILK_V3，落到 state/generated-voices/<sha256>.silk
+"""WeChatAgent MI 语音生成器：文本 -> SILK_V3，落到 state/generated-voices/<sha256>.silk
 
 输出 JSON（stdout）：
   {"ok":true,"path":"...\\<sha256>.silk","duration":4800,"sha256":"...","bytes":12687}
@@ -14,7 +14,7 @@
 import sys, os, json, asyncio, wave, tempfile, hashlib, argparse
 
 DEFAULT_VOICE = "zh-CN-XiaoxiaoNeural"
-DEFAULT_ROOT = r"C:\Users\star\AppData\Roaming\WeChatAgent\workspace"
+DEFAULT_ROOT = r"C:\Users\star\AppData\Roaming\WeChatAgent MI\workspace"
 
 
 def tts_mp3(text: str, voice: str) -> bytes:

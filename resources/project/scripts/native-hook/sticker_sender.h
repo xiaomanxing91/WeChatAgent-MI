@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 namespace WeixinSend { bool SendStickerFile(const std::string& target,const std::string& path); }
-namespace WeChatAgentSticker {
+namespace WeChatAgentMISticker {
     inline constexpr uintptr_t FileFactory=0x1C4CE70;
     inline constexpr uintptr_t FileConstructor=0x18EEDC0;
     inline constexpr uintptr_t Dispatch=0x16BED80;

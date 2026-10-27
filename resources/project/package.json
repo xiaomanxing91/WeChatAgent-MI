@@ -1,5 +1,5 @@
 {
-  "name": "wechatagent-runtime",
+  "name": "wechatagent-mi-runtime",
   "version": "0.3.7",
   "type": "module",
   "private": true

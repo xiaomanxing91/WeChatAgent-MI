@@ -18,7 +18,7 @@ if ($ours.Count) {
     $currentBuild = Get-Content -LiteralPath (Join-Path $root 'state\hook\native\build.json') -Raw -Encoding UTF8 | ConvertFrom-Json
     $installedDll = Join-Path $directory 'version.dll'
     if (-not (Test-Path -LiteralPath $installedDll) -or (Get-FileHash -LiteralPath $installedDll -Algorithm SHA256).Hash.ToLowerInvariant() -ne $currentBuild.sha256) { throw 'HOOK_COMPONENT_UPDATE_PENDING: Exit the matching WeChat from its tray before reopening it to apply the updated sender.' }
-    Write-Output 'Matching WeChat is already open. Log in there, then start WeChatAgent.'; exit 0
+    Write-Output 'Matching WeChat is already open. Log in there, then start WeChatAgent MI.'; exit 0
 }
 $native = Join-Path $root 'state\hook\native'
 $build = Get-Content -LiteralPath (Join-Path $native 'build.json') -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -48,4 +48,4 @@ if ($clientProcess.HasExited) {
     $replacement = @(Get-CimInstance Win32_Process -Filter "Name='Weixin.exe'" | Where-Object { $_.ExecutablePath -eq $exe -and $_.CommandLine -notmatch '--type=|--crashpad-handler' })
     if (-not $replacement.Count) { throw 'WECHAT_LAUNCH_EXITED: The matching client exited after launch. If WeChat requests an upgrade, this fixed-version sender needs a compatible client adaptation.' }
 }
-Write-Output ('Opened matching WeChat '+$config.hook.expectedVersion+'. Log in, then start WeChatAgent.cmd.')
+Write-Output ('Opened matching WeChat '+$config.hook.expectedVersion+'. Log in, then start WeChatAgent MI.cmd.')

@@ -22,9 +22,9 @@ if (keyword) {
     if (data.success === false || !Array.isArray(data.contacts)) throw new Error('Invalid contact response');
     const contacts = data.contacts.filter(contact => contact.username && !String(contact.username).includes('@chatroom') && contact.username !== io.self_wxid);
     for (const contact of contacts) show(contact.username, contact.remark || contact.displayName || contact.nickname || 'Unnamed contact');
-    if (!contacts.length) console.log('未找到匹配好友。请检查昵称或备注，确认电脑微信已同步联系人；新加好友后可先重启 WeChatAgent 再查询。');
+    if (!contacts.length) console.log('未找到匹配好友。请检查昵称或备注，确认电脑微信已同步联系人；新加好友后可先重启 WeChatAgent MI 再查询。');
   } catch {
-    console.error('无法查询联系人。请先登录电脑微信并启动 WeChatAgent，再运行好友查询。');
+    console.error('无法查询联系人。请先登录电脑微信并启动 WeChatAgent MI，再运行好友查询。');
     process.exitCode = 1;
   }
 } else {

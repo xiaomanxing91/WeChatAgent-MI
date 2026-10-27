@@ -18,18 +18,18 @@ DWORD WINAPI Initialize(LPVOID module) {
     // its worker and HTTP handlers are in use; no join occurs under loader lock.
     HMODULE own = nullptr;
     if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
-        reinterpret_cast<LPCWSTR>(&ScheduleWeChatAgentInit), &own)) {
+        reinterpret_cast<LPCWSTR>(&ScheduleWeChatAgentMIInit), &own)) {
         InterlockedExchange(&state, 4); return 0;
     }
     const auto started = GetTickCount64();
-    WeChatAgentInitLog("waiting_for_weixin_dll");
+    WeChatAgentMIInitLog("waiting_for_weixin_dll");
     HMODULE core = nullptr;
     while (!InterlockedCompareExchange(&cancelled, 0, 0)) {
         // Acquire a reference as well as checking presence. This call observes
         // the loader's serialization instead of accessing a half-loaded module.
         if (GetModuleHandleExW(0, L"Weixin.dll", &core)) break;
         if (GetTickCount64() - started >= waitMs) {
-            InterlockedExchange(&state, 4); WeChatAgentInitLog("module_wait_timeout", waitMs); return 0;
+            InterlockedExchange(&state, 4); WeChatAgentMIInitLog("module_wait_timeout", waitMs); return 0;
         }
         Sleep(50);
     }
@@ -37,15 +37,15 @@ DWORD WINAPI Initialize(LPVOID module) {
         if (core) FreeLibrary(core);
         InterlockedExchange(&state, 5); return 0;
     }
-    WeChatAgentInitLog("weixin_dll_ready", static_cast<DWORD>(GetTickCount64() - started));
+    WeChatAgentMIInitLog("weixin_dll_ready", static_cast<DWORD>(GetTickCount64() - started));
     InterlockedExchange(&state, 2);
     try {
         CustomInit(static_cast<HMODULE>(module));
         const bool ready = g_httpServer && g_httpServer->IsRunning();
         InterlockedExchange(&state, ready ? 3 : 4);
-        WeChatAgentInitLog(ready ? "initialization_ready" : "initialization_failed", g_StartPort);
+        WeChatAgentMIInitLog(ready ? "initialization_ready" : "initialization_failed", g_StartPort);
     } catch (...) {
-        InterlockedExchange(&state, 4); WeChatAgentInitLog("initialization_exception");
+        InterlockedExchange(&state, 4); WeChatAgentMIInitLog("initialization_exception");
     }
     // Core code and offsets remain in use by HTTP handlers for this process.
     // Both module references intentionally live until process termination.
@@ -53,32 +53,32 @@ DWORD WINAPI Initialize(LPVOID module) {
 }
 }
 
-void ScheduleWeChatAgentInit(HMODULE module) {
+void ScheduleWeChatAgentMIInit(HMODULE module) {
     if (InterlockedCompareExchange(&state, 1, 0) != 0) return;
     HANDLE thread = CreateThread(nullptr, 0, Initialize, module, 0, nullptr);
     if (thread) CloseHandle(thread);
     else {
         InterlockedExchange(&state, 4);
-        OutputDebugStringA("[WeChatAgent] initialization worker creation failed\n");
+        OutputDebugStringA("[WeChatAgent MI] initialization worker creation failed\n");
     }
 }
-void CancelWeChatAgentInit() { InterlockedExchange(&cancelled, 1); }
-const char* WeChatAgentInitState() {
+void CancelWeChatAgentMIInit() { InterlockedExchange(&cancelled, 1); }
+const char* WeChatAgentMIInitState() {
     switch (InterlockedCompareExchange(&state, 0, 0)) {
     case 0: return "idle"; case 1: return "waiting_for_module";
     case 2: return "initializing"; case 3: return "ready";
     case 5: return "cancelled"; default: return "failed";
     }
 }
-void WeChatAgentInitLog(const char* stage, unsigned long detail) {
+void WeChatAgentMIInitLog(const char* stage, unsigned long detail) {
     char line[240]; SYSTEMTIME time{}; GetLocalTime(&time);
-    sprintf_s(line, "[WeChatAgent] %04u-%02u-%02u %02u:%02u:%02u pid=%lu stage=%s detail=%lu\n",
+    sprintf_s(line, "[WeChatAgent MI] %04u-%02u-%02u %02u:%02u:%02u pid=%lu stage=%s detail=%lu\n",
         time.wYear,time.wMonth,time.wDay,time.wHour,time.wMinute,time.wSecond,GetCurrentProcessId(),stage,detail);
     OutputDebugStringA(line);
     try {
         HMODULE own = nullptr;
         if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-            reinterpret_cast<LPCWSTR>(&WeChatAgentInitLog), &own)) return;
+            reinterpret_cast<LPCWSTR>(&WeChatAgentMIInitLog), &own)) return;
         wchar_t filename[32768];
         const DWORD size = GetModuleFileNameW(own, filename, _countof(filename));
         if (!size || size >= _countof(filename)) return;

@@ -28,7 +28,7 @@ namespace WeixinSend {
 }
 
 namespace {
-using WeChatAgentVoice::MediaDesc;
+using WeChatAgentMIVoice::MediaDesc;
 
 // push rbp / push r14 / push rsi / push rdi / push rbx / sub rsp,0xB0
 constexpr unsigned char kSendPrologue[13] = {
@@ -77,7 +77,7 @@ bool InvokeFactory(SharedMessage* message, std::string* target, std::string* sil
         using Factory = SharedMessage* (*)(SharedMessage*, std::string*, std::string*,
                                            uint32_t*, MediaDesc*);
         auto factory = reinterpret_cast<Factory>(
-            reinterpret_cast<uintptr_t>(g_hWeixinDll) + WeChatAgentVoice::Factory);
+            reinterpret_cast<uintptr_t>(g_hWeixinDll) + WeChatAgentMIVoice::Factory);
         factory(message, target, silk, &durationMs, desc);
         return true;
     } __except (EXCEPTION_EXECUTE_HANDLER) {
@@ -90,7 +90,7 @@ bool InvokeSend(uintptr_t first, uint64_t* second, long long* rc) {
     __try {
         using Send = __int64 (*)(uintptr_t, uint64_t*);
         auto send = reinterpret_cast<Send>(
-            reinterpret_cast<uintptr_t>(g_hWeixinDll) + WeChatAgentVoice::SendMessage);
+            reinterpret_cast<uintptr_t>(g_hWeixinDll) + WeChatAgentMIVoice::SendMessage);
         *rc = static_cast<long long>(send(first, second));
         return true;
     } __except (EXCEPTION_EXECUTE_HANDLER) {
@@ -99,7 +99,7 @@ bool InvokeSend(uintptr_t first, uint64_t* second, long long* rc) {
 }
 }
 
-namespace WeChatAgentVoice {
+namespace WeChatAgentMIVoice {
 
 bool Ready() {
     auto module = GetModuleHandleW(L"Weixin.dll");
@@ -109,13 +109,13 @@ bool Ready() {
     if (dos->e_magic != IMAGE_DOS_SIGNATURE) return false;
     const auto* pe = reinterpret_cast<const IMAGE_NT_HEADERS64*>(base + dos->e_lfanew);
     if (pe->Signature != IMAGE_NT_SIGNATURE) return false;
-    if (WeChatAgentVoice::SendEntry + sizeof(kSendPrologue) >= pe->OptionalHeader.SizeOfImage) return false;
-    if (std::memcmp(reinterpret_cast<const void*>(base + WeChatAgentVoice::SendEntry),
+    if (WeChatAgentMIVoice::SendEntry + sizeof(kSendPrologue) >= pe->OptionalHeader.SizeOfImage) return false;
+    if (std::memcmp(reinterpret_cast<const void*>(base + WeChatAgentMIVoice::SendEntry),
                     kSendPrologue, sizeof(kSendPrologue)) != 0) return false;
-    if (std::memcmp(reinterpret_cast<const void*>(base + WeChatAgentVoice::Factory),
+    if (std::memcmp(reinterpret_cast<const void*>(base + WeChatAgentMIVoice::Factory),
                     kFactoryPrologue, sizeof(kFactoryPrologue)) != 0) return false;
-    auto owner = *reinterpret_cast<const uintptr_t*>(base + WeChatAgentVoice::OwnerVtable);
-    auto body = *reinterpret_cast<const uintptr_t*>(base + WeChatAgentVoice::BodyVtable);
+    auto owner = *reinterpret_cast<const uintptr_t*>(base + WeChatAgentMIVoice::OwnerVtable);
+    auto body = *reinterpret_cast<const uintptr_t*>(base + WeChatAgentMIVoice::BodyVtable);
     auto inside = [base, pe](uintptr_t value) {
         return value >= base && value < base + pe->OptionalHeader.SizeOfImage;
     };
@@ -189,14 +189,14 @@ bool SendVoiceFile(const std::string& target, const std::string& silk,
     uintptr_t ownerVt = message.owner ? *reinterpret_cast<uintptr_t*>(message.owner) : 0;
     Diag("factory ok=%d body=%p owner=%p bodyVt=%p want=%p ownerVt=%p want=%p elapsed=%lu swap=%d",
         ok ? 1 : 0, reinterpret_cast<void*>(message.body), reinterpret_cast<void*>(message.owner),
-        reinterpret_cast<void*>(bodyVt), reinterpret_cast<void*>(base + WeChatAgentVoice::BodyVtable),
-        reinterpret_cast<void*>(ownerVt), reinterpret_cast<void*>(base + WeChatAgentVoice::OwnerVtable),
+        reinterpret_cast<void*>(bodyVt), reinterpret_cast<void*>(base + WeChatAgentMIVoice::BodyVtable),
+        reinterpret_cast<void*>(ownerVt), reinterpret_cast<void*>(base + WeChatAgentMIVoice::OwnerVtable),
         elapsed, swapArgs ? 1 : 0);
     if (!ok || !message.body || !message.owner) {
         if (error) *error = "voice factory failed";
         return false;
     }
-    if (bodyVt != base + WeChatAgentVoice::BodyVtable || ownerVt != base + WeChatAgentVoice::OwnerVtable) {
+    if (bodyVt != base + WeChatAgentMIVoice::BodyVtable || ownerVt != base + WeChatAgentMIVoice::OwnerVtable) {
         if (error) *error = "unexpected voice class";
         return false;
     }

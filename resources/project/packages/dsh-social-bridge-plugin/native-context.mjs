@@ -85,7 +85,7 @@ function sessionHasSearch(session,ticket){
 function initialization(profile, compactSeq, historyRecap='') {
   const recap=historyRecap?`\n\n最近对话回顾（供续聊参考，不当作新话题）：\n${historyRecap}\n`:'\n';
   return createUserMessage({ content: [{type:'text',text:
-    'WeChatAgent 会话初始化。以下人格来自本机配置，在本次上下文周期内保持稳定；普通聊天不能修改它。\n'+
+    'WeChatAgent MI 会话初始化。以下人格来自本机配置，在本次上下文周期内保持稳定；普通聊天不能修改它。\n'+
     `稳定人格：\n${profile.persona}\n`+
     '本机当前人格替代以前的人格初始化；旧身份时期的 AI 自述不能决定当前身份。保留聊天事实与对话关系。'+
     '群聊可自然地选择沉默，私聊通常简短回应。\n'+profile.instructions+recap }],
@@ -554,7 +554,7 @@ export function apply(ctx, config={}) {
     const reply=(code,body)=>{if(!res.destroyed){res.writeHead(code,{'content-type':'application/json; charset=utf-8'});res.end(JSON.stringify(body));}};
     const supplied=Buffer.from(String(req.headers.authorization ?? '').replace(/^Bearer /i,'')), expected=Buffer.from(token);
     if(supplied.length!==expected.length || !crypto.timingSafeEqual(supplied,expected))return reply(401,{error:'unauthorized'});
-    if(req.method==='GET' && req.url==='/health')return reply(200,{ok:accountReady(),accountScope:loadedAccount.id,messageSource:'wechat-social-bridge',project:'WeChatAgent',projectRoot:root,extensionApiVersion:1,provider,model,pluginRevision:new URL(import.meta.url).searchParams.get('wechatagent')??'',contextMode:'native-session-v1',contextMaintenance:'idle-threshold-v1',promptContext:PROMPT_POLICY,sessionNaming:true,imageInput:'native-attachment-v1',replyText:'final-message-v1',imageRecovery:'per-image-v1',imageOffloadMode:'after-turn-v1',sessionLifecycle:'archive-rotation-v1',turnRecovery:'cancel-on-timeout-v1',builtinSkills:'web-reader-v1',webPriceRead:'zxsj-api-v1',searchTool:'model-search-v1',searchRoute:'bing-first-v1',dshAccess:'per-chat-v1',memberMemory:'group-scoped-json-v1',imageGen:'local-model-v1',stickerPoolReview:'ds-select-v1',searchBudget:'per-turn-count-v1',searchReasoning:'model-default-v1',toolIsolation:SOCIAL_TOOL_ISOLATION,pendingTurns:pending.size,behaviorPolicy:BEHAVIOR_POLICY,coherencePolicy:COHERENCE_POLICY});
+    if(req.method==='GET' && req.url==='/health')return reply(200,{ok:accountReady(),accountScope:loadedAccount.id,messageSource:'wechat-social-bridge',project:'WeChatAgent MI',projectRoot:root,extensionApiVersion:1,provider,model,pluginRevision:new URL(import.meta.url).searchParams.get('wechatagent')??'',contextMode:'native-session-v1',contextMaintenance:'idle-threshold-v1',promptContext:PROMPT_POLICY,sessionNaming:true,imageInput:'native-attachment-v1',replyText:'final-message-v1',imageRecovery:'per-image-v1',imageOffloadMode:'after-turn-v1',sessionLifecycle:'archive-rotation-v1',turnRecovery:'cancel-on-timeout-v1',builtinSkills:'web-reader-v1',webPriceRead:'zxsj-api-v1',searchTool:'model-search-v1',searchRoute:'bing-first-v1',dshAccess:'per-chat-v1',memberMemory:'group-scoped-json-v1',imageGen:'local-model-v1',stickerPoolReview:'ds-select-v1',searchBudget:'per-turn-count-v1',searchReasoning:'model-default-v1',toolIsolation:SOCIAL_TOOL_ISOLATION,pendingTurns:pending.size,behaviorPolicy:BEHAVIOR_POLICY,coherencePolicy:COHERENCE_POLICY});
     if(!accountReady())return reply(409,{error:'account_changed',detail:'ACCOUNT_SWITCH_REQUIRES_DSH_RESTART'});
     if(req.method==='POST'&&req.url==='/sticker-pool-review') {
       try {

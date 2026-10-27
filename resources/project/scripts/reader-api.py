@@ -738,7 +738,7 @@ class Reader:
             opener=urllib.request.build_opener(urllib.request.ProxyHandler({}),NoRedirect())
             request=urllib.request.Request(url+'/health',headers={'Authorization':'Bearer '+token})
             with opener.open(request,timeout=3) as response:health=json.loads(response.read(65536))
-            if health.get('ok') is not True or health.get('project')!='WeChatAgent' or pathlib.Path(health.get('projectRoot','')).resolve()!=self.root.resolve() or health.get('stickerPoolReview')!='ds-select-v1':raise RuntimeError('STICKER_REVIEW_PROJECT_UNAVAILABLE')
+            if health.get('ok') is not True or health.get('project')!='WeChatAgent MI' or pathlib.Path(health.get('projectRoot','')).resolve()!=self.root.resolve() or health.get('stickerPoolReview')!='ds-select-v1':raise RuntimeError('STICKER_REVIEW_PROJECT_UNAVAILABLE')
             if not self.sticker_account_active():raise PermissionError('Account changed')
             request=urllib.request.Request(url+'/sticker-pool-review',data=json.dumps({'ticket':ticket}).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'},method='POST')
             with opener.open(request,timeout=75) as response:result=json.loads(response.read(16384))

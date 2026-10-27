@@ -6,12 +6,12 @@ const { projectDirectory, safeNavigation, externalWebUrl, windowPlacement } = re
 const { bootstrapDeployment } = require('./deployment.cjs');
 const { createAppearanceStore, strengthOf } = require('./appearance.cjs');
 
-app.setName('WeChatAgent');
+app.setName('WeChatAgent MI');
 app.commandLine.appendSwitch('no-sandbox');
 app.disableHardwareAcceleration();
 app.setAppUserModelId('local.wechatagent.desktop');
 const installedDistribution = app.isPackaged && fs.existsSync(path.join(process.resourcesPath, 'project', 'deployment.json'));
-const deploymentHome = process.env.WECHATAGENT_TEST_DATA_HOME || path.join(app.getPath('appData'), 'WeChatAgent');
+const deploymentHome = process.env.WECHATAGENT_TEST_DATA_HOME || path.join(app.getPath('appData'), 'WeChatAgent MI');
 let deployment = null;
 const root = installedDistribution ? path.join(deploymentHome, 'workspace') : projectDirectory(process.resourcesPath, __dirname, app.isPackaged);
 const dataDirectory = path.join(root, 'state', 'desktop');
@@ -42,7 +42,7 @@ else {
     app.on('quit', (e, code) => trace('app quit code=' + code));
     let loadingWindow;
     if (installedDistribution) {
-      loadingWindow = new BrowserWindow({ width:480, height:280, resizable:false, title:'WeChatAgent', icon:path.join(__dirname,'icon.png'), backgroundColor:'#f3f5f4', webPreferences:{preload:path.join(__dirname,'loading-preload.cjs'),contextIsolation:true,sandbox:true,nodeIntegration:false} });
+      loadingWindow = new BrowserWindow({ width:480, height:280, resizable:false, title:'WeChatAgent MI', icon:path.join(__dirname,'icon.png'), backgroundColor:'#f3f5f4', webPreferences:{preload:path.join(__dirname,'loading-preload.cjs'),contextIsolation:true,sandbox:true,nodeIntegration:false} });
       loadingWindow.setMenu(null);
       await loadingWindow.loadFile(path.join(__dirname,'loading.html'));
       trace('loading window ready');
@@ -77,7 +77,7 @@ else {
     const iconImage = nativeImage.createFromPath(iconPath);
     const savedBounds = preferences.bounds;
     const area = savedBounds && Number.isFinite(savedBounds.x) && Number.isFinite(savedBounds.y) ? screen.getDisplayNearestPoint({ x: savedBounds.x, y: savedBounds.y }).workArea : screen.getPrimaryDisplay().workArea;
-    window = new BrowserWindow({ ...windowPlacement(savedBounds, area), minWidth: Math.min(900, area.width), minHeight: Math.min(620, area.height), title: 'WeChatAgent', icon: iconPath, show: false,
+    window = new BrowserWindow({ ...windowPlacement(savedBounds, area), minWidth: Math.min(900, area.width), minHeight: Math.min(620, area.height), title: 'WeChatAgent MI', icon: iconPath, show: false,
       titleBarStyle: 'hidden', titleBarOverlay: { color: theme === 'dark' ? '#222a25' : '#ffffff', symbolColor: theme === 'dark' ? '#e5ebe7' : '#26332e', height: 48 },
       backgroundColor: theme === 'dark' ? '#181e1b' : '#f3f5f4',
       webPreferences: { preload: path.join(__dirname, 'preload.cjs'), nodeIntegration: false, contextIsolation: true, sandbox: true, webSecurity: true, devTools: false, spellcheck: false },
@@ -150,17 +150,17 @@ else {
     window.webContents.on('render-process-gone', (e, d) => trace('render-gone ' + JSON.stringify(d)));
     window.webContents.on('did-fail-load', (e, code, desc, url) => trace('did-fail-load ' + code + ' ' + desc + ' ' + url));
     window.webContents.on('did-finish-load', () => trace('did-finish-load'));
-    window.webContents.on('page-title-updated', event => { event.preventDefault(); window.setTitle('WeChatAgent'); });
+    window.webContents.on('page-title-updated', event => { event.preventDefault(); window.setTitle('WeChatAgent MI'); });
     tray = new Tray(iconImage.resize({ width: 20, height: 20 }));
     trace('tray created');
-    tray.setToolTip('WeChatAgent');
-    tray.setContextMenu(Menu.buildFromTemplate([{ label: '打开 WeChatAgent', click: bringForward }, { type: 'separator' }, { label: '退出应用', click: () => app.quit() }]));
+    tray.setToolTip('WeChatAgent MI');
+    tray.setContextMenu(Menu.buildFromTemplate([{ label: '打开 WeChatAgent MI', click: bringForward }, { type: 'separator' }, { label: '退出应用', click: () => app.quit() }]));
     tray.on('double-click', bringForward); tray.on('click', bringForward);
     await window.loadURL(origin + '/');
     trace('url loaded');
   }).catch(error => {
     try { fs.writeFileSync('D:\\a\\startup_error.txt', String((error && error.stack) || error)); } catch {}
-    dialog.showErrorBox('WeChatAgent 启动失败', error.message); quitting = true; app.quit();
+    dialog.showErrorBox('WeChatAgent MI 启动失败', error.message); quitting = true; app.quit();
   });
   app.on('before-quit', event => {
     if (consoleApp?.isBusy()) {

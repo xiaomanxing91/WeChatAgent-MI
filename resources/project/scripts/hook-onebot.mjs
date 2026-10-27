@@ -87,7 +87,7 @@ export class HookOneBot {
     return this.json(this.hook.baseUrl, route, {
       method: body === undefined ? 'GET' : 'POST',
       headers: { Authorization: 'Bearer ' + this.nativeToken, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
-        ...(account ? { 'X-WeChatAgent-Account': account } : {}) },
+        ...(account ? { 'X-WeChatAgentMI-Account': account } : {}) },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     }, this.hook.requestTimeoutMs ?? 5000);
   }
@@ -96,7 +96,7 @@ export class HookOneBot {
     const reader = await this.reader('/api/v1/reader/status');
     if (reader.backend !== 'weflow-cli-nt' || !reader.ownWxid || !reader.accountDirectory) fail('READER_ACCOUNT_METADATA_REQUIRED');
     this.ownWxid = reader.ownWxid;
-    const native = await this.native('/WeChatAgent/health').catch(error => {
+    const native = await this.native('/WeChatAgentMI/health').catch(error => {
       if(error instanceof AdapterError)throw error;
       const code=error?.cause?.code??error?.code;
       if(code==='ECONNREFUSED')fail('HOOK_NOT_LISTENING');
@@ -108,7 +108,7 @@ export class HookOneBot {
     this.status.native_image_send = native.nativeImageSend!==false;
     this.status.native_voice_send = native.nativeVoiceSend!==false;
     this.status.hook_connected = true; this.status.version = native.version ?? '';
-    if (native.integration !== 'WeChatAgent-1' || native.backend !== 'wechat-hook') fail('REVIEWED_HOOK_BUILD_REQUIRED');
+    if (native.integration !== 'WeChatAgentMI-1' || native.backend !== 'wechat-hook') fail('REVIEWED_HOOK_BUILD_REQUIRED');
     if (native.version !== this.hook.expectedVersion || native.version !== '4.1.10.27') fail('HOOK_VERSION_MISMATCH');
     if (!Array.isArray(native.databaseAccounts) || native.databaseAccounts.length !== 1 ||
         native.databaseAccounts[0] !== reader.accountDirectory.toLowerCase()) fail('HOOK_ACCOUNT_NOT_READY');
@@ -529,7 +529,7 @@ export class HookOneBot {
       } else if (action === 'get_status') {
         data = { online: this.status.hook_account_verified, good: this.status.hook_account_verified && this.status.reader_connected };
       } else if (action === 'get_version_info') {
-        data = { app_name: 'WeChatAgent-WeChat-Hook', app_version: '1', protocol_version: 'v11' };
+        data = { app_name: 'WeChatAgent MI-WeChat-Hook', app_version: '1', protocol_version: 'v11' };
       } else if (action === 'get_login_info') {
         data = { user_id: (await this.checkNative()).selfId, nickname: this.project.account.nicknames[0] };
       } else if (['get_friend_list', 'get_group_list'].includes(action)) {
@@ -656,7 +656,7 @@ export class HookOneBot {
         res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(this.status));
       } else if (req.url === '/') {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
-        res.end('<!doctype html><meta charset="utf-8"><title>WeChatAgent</title><h1>WeChatAgent · WeChat-Hook</h1><p>OneBot v11 · 后台文字发送</p><pre id="status">加载中</pre><script>async function update(){try{document.getElementById("status").textContent=JSON.stringify(await(await fetch("/status")).json(),null,2)}catch{document.getElementById("status").textContent="状态服务未连接"}}update();setInterval(update,2000)</script>');
+        res.end('<!doctype html><meta charset="utf-8"><title>WeChatAgent MI</title><h1>WeChatAgent MI · WeChat-Hook</h1><p>OneBot v11 · 后台文字发送</p><pre id="status">加载中</pre><script>async function update(){try{document.getElementById("status").textContent=JSON.stringify(await(await fetch("/status")).json(),null,2)}catch{document.getElementById("status").textContent="状态服务未连接"}}update();setInterval(update,2000)</script>');
       } else { res.writeHead(404); res.end(); }
     });
     await new Promise((resolve, reject) => { this.server.once('error', reject); this.server.listen(this.project.ports.adapter, '127.0.0.1', resolve); });

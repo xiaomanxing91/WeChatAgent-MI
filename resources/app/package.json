@@ -1,9 +1,9 @@
 {
-  "name": "wechatagent",
-  "productName": "WeChatAgent",
+  "name": "wechatagent-mi",
+  "productName": "WeChatAgent MI",
   "version": "0.3.7",
-  "description": "WeChatAgent desktop console",
+  "description": "WeChatAgent MI desktop console",
   "main": "main.cjs",
-  "author": "WeChatAgent contributors",
+  "author": "WeChatAgent MI contributors",
   "license": "SEE THIRD-PARTY-NOTICES.txt"
 }

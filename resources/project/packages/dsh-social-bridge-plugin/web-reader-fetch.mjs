@@ -174,7 +174,7 @@ function fetchOnce(url, ip, signal) {
       request = (url.protocol === 'https:' ? https : http).request({
         hostname: ip, port: url.port || (url.protocol === 'https:' ? 443 : 80),
         path: url.pathname + url.search, method: 'GET',
-        headers: { host: url.host, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 WeChatAgent-WebReader/1.0',
+        headers: { host: url.host, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 WeChatAgent MI-WebReader/1.0',
           accept: 'text/html,application/xhtml+xml,text/plain;q=0.8', 'accept-encoding': 'gzip, deflate, br', 'accept-language': 'zh-CN,zh;q=0.9,en;q=0.7' },
         servername: url.protocol === 'https:' && !net.isIP(hostname) ? hostname : undefined,
         rejectUnauthorized: true,

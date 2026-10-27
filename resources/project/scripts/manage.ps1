@@ -21,7 +21,7 @@ function Owned-Process($Item,[switch]$AllowStale) {
     if (-not $process.ExecutablePath -or -not $process.CommandLine) { throw 'Cannot verify recorded process identity; refusing to stop it.' }
     if ($process.ExecutablePath -ne $Item.exe -or $process.CommandLine.IndexOf($Item.marker,[StringComparison]::OrdinalIgnoreCase) -lt 0) {
         if ($AllowStale) { Write-Host 'Discarded a stale service process record; unrelated process was not stopped.'; return $null }
-        throw 'Recorded PID no longer belongs to WeChatAgent; refusing to stop it.'
+        throw 'Recorded PID no longer belongs to WeChatAgent MI; refusing to stop it.'
     }
     return $process
 }
@@ -56,7 +56,7 @@ function Stop-Services {
 function Start-ServiceProcess([string]$Name,[string]$Exe,[string]$Arguments,[string]$Directory,[string]$Marker,[int]$Port,[bool]$Visible) {
     if (Test-Port $Port) {
         $item = $script:record[$Name]
-        if (-not (Owned-Process $item)) { throw ($Name + ' port is used by another installation. Stop that installation before starting WeChatAgent.') }
+        if (-not (Owned-Process $item)) { throw ($Name + ' port is used by another installation. Stop that installation before starting WeChatAgent MI.') }
         $owners = @(Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction Stop | Select-Object -ExpandProperty OwningProcess -Unique)
         if ($owners -notcontains [int]$item.pid) { throw ('Unexpected owner of ' + $Name + ' port.') }
         return
@@ -139,7 +139,7 @@ try {
         $readerEntry = Join-Path $PSScriptRoot 'reader-api.py'
         Start-ServiceProcess 'reader' $python ('"'+$readerEntry+'"') $root $readerEntry ([int]$config.ports.weflow) $false
     } elseif ($externalWeFlow) {
-        if (-not (Test-Port ([int]$config.ports.weflow))) { throw 'Open your existing WeFlow and enable its API before starting WeChatAgent.' }
+        if (-not (Test-Port ([int]$config.ports.weflow))) { throw 'Open your existing WeFlow and enable its API before starting WeChatAgent MI.' }
         Write-Output 'Using existing WeFlow API; its process and encrypted configuration are not managed here.'
     } else {
         Start-ServiceProcess 'weflow' $electron ('"'+$weflowRoot+'"') $weflowRoot $weflowRoot ([int]$config.ports.weflow) $true
@@ -151,7 +151,7 @@ try {
     }
     if ($hookSender) {
         & $node (Join-Path $PSScriptRoot 'hook-onebot.mjs') --check
-        if ($LASTEXITCODE -ne 0) { throw 'WeChat-Hook is not ready. Use Open WeChat in WeChatAgent, finish login, then start again. Check the error above and state/logs/hook-init.log for native initialization details.' }
+        if ($LASTEXITCODE -ne 0) { throw 'WeChat-Hook is not ready. Use Open WeChat in WeChatAgent MI, finish login, then start again. Check the error above and state/logs/hook-init.log for native initialization details.' }
     }
     $env:SOCIAL_DSH_TOKEN = (Get-Content (Join-Path $stateDir 'social-dsh-token.txt') -Raw).Trim()
     $dshUrl = 'http://127.0.0.1:'+$config.ports.dshPlugin+'/health'
@@ -165,9 +165,9 @@ try {
         $accountIdentity = Get-Content -LiteralPath $accountIdentityFile -Raw -Encoding UTF8 | ConvertFrom-Json
         if ($health.accountScope -ne $accountIdentity.id) { throw 'ACCOUNT_SWITCH_REQUIRES_DSH_RESTART: Fully exit DSH from the tray and reopen it after switching account.' }
     }
-    if ($health.ok -ne $true -or $health.project -ne 'WeChatAgent' -or [IO.Path]::GetFullPath($health.projectRoot) -ne [IO.Path]::GetFullPath($root)) { throw 'Install the DSH plugin from this project packages directory, then fully reopen DSH.' }
+    if ($health.ok -ne $true -or $health.project -ne 'WeChatAgent MI' -or [IO.Path]::GetFullPath($health.projectRoot) -ne [IO.Path]::GetFullPath($root)) { throw 'Install the DSH plugin from this project packages directory, then fully reopen DSH.' }
     if ($health.contextMode -ne 'native-session-v1') { throw 'Fully exit DSH from the tray and reopen it to load the native-session plugin.' }
-    if ($health.behaviorPolicy -ne 'local-config-only-v1') { throw 'Fully reopen DSH to load the local-only behavior policy before starting WeChatAgent.' }
+    if ($health.behaviorPolicy -ne 'local-config-only-v1') { throw 'Fully reopen DSH to load the local-only behavior policy before starting WeChatAgent MI.' }
     if ($ntReader -and $health.imageInput -ne 'native-attachment-v1') { throw 'Fully exit DSH from the tray and reopen it to load the image attachment plugin.' }
     $bridgeEntry = Join-Path $root 'components\qq-bridge\src\social-bridge.js'
     Start-ServiceProcess 'bridge' $node ('"'+$bridgeEntry+'" "'+(Join-Path $stateDir 'bridge-config.json')+'"') (Join-Path $root 'components\qq-bridge') $bridgeEntry ([int]$config.ports.onebot) $false

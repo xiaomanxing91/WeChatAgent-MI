@@ -5,7 +5,7 @@ const net = require('node:net');
 function projectDirectory(resourcesPath, sourceDirectory, packaged) {
   const root = packaged ? path.resolve(resourcesPath, '../../..') : path.resolve(sourceDirectory, '../..');
   for (const name of ['scripts/console-server.mjs', 'config/wechatagent.example.json', 'public/console/index.html']) {
-    if (!fs.existsSync(path.join(root, name))) throw new Error('请将桌面应用保留在完整的 WeChatAgent 项目目录中。');
+    if (!fs.existsSync(path.join(root, name))) throw new Error('请将桌面应用保留在完整的 WeChatAgent MI 项目目录中。');
   }
   return root;
 }

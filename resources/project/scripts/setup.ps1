@@ -24,4 +24,4 @@ if ($IncludeQqDependencies) { Install-Npm (Join-Path $root 'components\qq-bridge
 & $python -m pip check
 if ($LASTEXITCODE -ne 0) { throw 'Python dependency conflicts detected.' }
 Write-Output ('Install the local plugin in DSH Desktop: '+(Join-Path $root 'packages\dsh-social-bridge-plugin'))
-Write-Output 'Dependencies installed. For WeChat-Hook, build the native component and prepare the matching client as described in docs/WECHAT_HOOK.md. Then start WeChatAgent.cmd.'
+Write-Output 'Dependencies installed. For WeChat-Hook, build the native component and prepare the matching client as described in docs/WECHAT_HOOK.md. Then start WeChatAgent MI.cmd.'

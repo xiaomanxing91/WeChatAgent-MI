@@ -17,10 +17,10 @@ namespace WeixinSend {
         struct SharedMessage {uintptr_t body,owner;};
         SharedMessage message{};
         using Factory=SharedMessage*(*)(SharedMessage*);
-        reinterpret_cast<Factory>(base+WeChatAgentSticker::EmojiFactory)(&message);
+        reinterpret_cast<Factory>(base+WeChatAgentMISticker::EmojiFactory)(&message);
         if(!message.body || message.body!=message.owner+0x10 ||
-          *reinterpret_cast<uintptr_t*>(message.owner)!=base+WeChatAgentSticker::EmojiOwnerVtable ||
-          *reinterpret_cast<uintptr_t*>(message.body)!=base+WeChatAgentSticker::EmojiVtable)return false;
+          *reinterpret_cast<uintptr_t*>(message.owner)!=base+WeChatAgentMISticker::EmojiOwnerVtable ||
+          *reinterpret_cast<uintptr_t*>(message.body)!=base+WeChatAgentMISticker::EmojiVtable)return false;
         // The native constructor supplies sender/account state and the message
         // identifier. Set only fields validated against the current layout.
         *reinterpret_cast<std::string*>(message.body+0xB0)=target;

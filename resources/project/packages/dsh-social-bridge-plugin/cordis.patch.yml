@@ -1,6 +1,6 @@
 - insert:
     - id: dsh-social-bridge-plugin
-      name: "file:///C:/Users/star/AppData/Roaming/WeChatAgent/workspace/packages/dsh-social-bridge-plugin/native-context.mjs?wechatagent=3d18679089064871"
+      name: "file:///C:/Users/star/AppData/Roaming/WeChatAgentMI/workspace/packages/dsh-social-bridge-plugin/native-context.mjs?wechatagent=3d18679089064871"
       config:
         provider: "workbuddy-global"
         model: "deepseek-v4.1-flash"

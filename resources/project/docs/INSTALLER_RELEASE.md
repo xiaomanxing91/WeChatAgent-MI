@@ -1,6 +1,6 @@
 # Windows 安装发行版
 
-安装器为 WeChatAgent-Setup-0.3.7-x64.exe，包含独立桌面应用、Node.js、Python、读取依赖及维护者已授权的微信、发送与自动连接组件。DSH 桌面端与插件 SDK 锁定 0.2.0-rc.2。
+安装器为 WeChatAgent MI-Setup-0.3.7-x64.exe，包含独立桌面应用、Node.js、Python、读取依赖及维护者已授权的微信、发送与自动连接组件。DSH 桌面端与插件 SDK 锁定 0.2.0-rc.2。
 
 此源码副本不包含安装器或 vendor 程序。安装器、SHA256SUMS.txt 与 VERIFICATION.json 作为 GitHub Releases 附件单独上传，release/、state/ 和第三方二进制继续排除在 Git 源码提交外。
 
@@ -18,7 +18,7 @@
 
 ## 数据与验证范围
 
-当前用户级安装。用户数据保存在当前用户 AppData 下的 WeChatAgent 工作区，运行环境按版本与内容哈希隔离。升级保留配置、凭据、人格编辑和私有状态；卸载保留用户数据。建议预留至少 6 GiB 空间。
+当前用户级安装。用户数据保存在当前用户 AppData 下的 WeChatAgent MI 工作区，运行环境按版本与内容哈希隔离。升级保留配置、凭据、人格编辑和私有状态；卸载保留用户数据。建议预留至少 6 GiB 空间。
 
 源码及安装包不包含维护者的账号、密钥、聊天或本机配置。授权人格作为预设包含，用户自己的编辑会保留。
 

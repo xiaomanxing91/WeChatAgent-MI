@@ -12,7 +12,7 @@
 """
 import sys, os, json, argparse, urllib.request, subprocess
 
-WS = r"C:\Users\star\AppData\Roaming\WeChatAgent\workspace"
+WS = r"C:\Users\star\AppData\Roaming\WeChatAgent MI\workspace"
 PYEXE = r"C:\Users\star\AppData\Local\Python\pythoncore-3.14-64\python.exe"
 
 
@@ -37,7 +37,7 @@ def post_voice(target, path, duration, token, account):
     req = urllib.request.Request("http://127.0.0.1:30001/SendVoiceMsg", data=body,
         headers={"Content-Type": "application/json",
                  "Authorization": "Bearer " + token,
-                 "X-WeChatAgent-Account": account})
+                 "X-WeChatAgentMI-Account": account})
     try:
         with urllib.request.urlopen(req, timeout=20) as r:
             return r.status, r.read().decode("utf-8", "replace")
@@ -48,7 +48,7 @@ def post_voice(target, path, duration, token, account):
 
 
 def health(token):
-    req = urllib.request.Request("http://127.0.0.1:30001/WeChatAgent/health",
+    req = urllib.request.Request("http://127.0.0.1:30001/WeChatAgentMI/health",
         headers={"Authorization": "Bearer " + token})
     try:
         with urllib.request.urlopen(req, timeout=10) as r:

@@ -139,7 +139,7 @@ export class ExtensionRuntime {
     if(signal?.aborted)throw error('EXTENSION_CANCELLED');
     this.assertPermission(record,'web_fetch',key);
     const status=result.statusCode ?? 200;
-    return new Response([204,205,304].includes(status)?null:result.body ?? result.text,{status,headers:{'X-WeChatAgent-Truncated':result.truncated?'true':'false'}});
+    return new Response([204,205,304].includes(status)?null:result.body ?? result.text,{status,headers:{'X-WeChatAgentMI-Truncated':result.truncated?'true':'false'}});
   }
   context(record,turn,signal) {
     const key = turn.conversationKey;

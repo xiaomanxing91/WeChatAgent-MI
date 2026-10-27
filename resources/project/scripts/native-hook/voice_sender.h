@@ -12,7 +12,7 @@
 //           uint32_t durationMs, VoiceMediaDesc* desc)
 // ctx 在函数入口即被覆盖，实际未使用（可传 nullptr）。
 // out 是 0x58 字节以上的输出缓冲：+0x00 服务 shared_ptr，+0x38 待发消息 vector。
-namespace WeChatAgentVoice {
+namespace WeChatAgentMIVoice {
     inline constexpr uintptr_t SendEntry   = 0x6199D10;  // UI 语音发送入口（造消息 + 待发列表）
     inline constexpr uintptr_t Factory     = 0x619A190;  // 语音消息工厂（造 0x778 消息对象）
     inline constexpr uintptr_t SendMessage = 0x1677A30;  // 与图片/表情共用的发送收口

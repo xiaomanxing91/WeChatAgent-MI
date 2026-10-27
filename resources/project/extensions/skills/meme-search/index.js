@@ -143,7 +143,7 @@ export async function searchMemes(ctx, {query: input, kind = 'any'}) {
       if (source === 'imgflip') url.searchParams.set('type', kind === 'any' ? 'gif,image' : kind);
       const response = await ctx.fetch(url.href, {maxChars: 65536, timeoutMs: providers.length > 1 ? 4000 : 7000});
       if (!response.ok) throw Error('PROVIDER_HTTP_' + response.status);
-      if (source !== 'bing' && response.headers.get('X-WeChatAgent-Truncated') === 'true') throw Error('PROVIDER_TRUNCATED');
+      if (source !== 'bing' && response.headers.get('X-WeChatAgentMI-Truncated') === 'true') throw Error('PROVIDER_TRUNCATED');
       const body = await response.text(), parse = source === 'bing' ? parseBing : source === 'openverse' ? parseOpenverse : parseImgflip;
       const items = rankCandidates(parse(body), query, kind, state.recent).slice(0, 6);
       if (!items.length) { attempts.push({provider: source, status: 'empty'}); continue; }

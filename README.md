@@ -1,9 +1,9 @@
-# WeChatAgent M＆I version
+# WeChatAgent MI version
 
-> 源码归档仓库（GitHub-ready）。本目录包含 WeChatAgent 桌面端助手的**全部可编辑源码**，
+> 源码归档仓库（GitHub-ready）。本目录包含 WeChatAgent MI 桌面端助手的**全部可编辑源码**，
 > 含原生文字 / 表情包 / **图片** / **原生语音发送** 等全部当前功能。
 
-WeChatAgent 是一个 Windows 桌面 AI 助手：通过注入式原生 Hook（`version.dll`）桥接微信桌面端
+WeChatAgent MI 是一个 Windows 桌面 AI 助手：通过注入式原生 Hook（`version.dll`）桥接微信桌面端
 （`Weixin.exe`，已验收版本 `4.1.10.27`），由 Electron 主进程托管控制台与桥接服务，并把社交对话
 交给外部 DSH 智能体（DeepSeek Harness）驱动。用户消息经 OneBot 反向桥接进入社交引擎，模型通过
 工具（含本次新增的原生语音发送工具）产出回复与富媒体，最终由原生 Hook 落地到微信。
@@ -13,7 +13,7 @@ WeChatAgent 是一个 Windows 桌面 AI 助手：通过注入式原生 Hook（`v
 ## 目录结构
 
 ```
-WeChatAgent M＆I version/
+WeChatAgent MI version/
 ├── README.md                 # 本文档
 ├── .gitignore
 └── resources/
@@ -52,7 +52,7 @@ WeChatAgent M＆I version/
 - 好友 / 群聊白名单、人格预设（傲娇助手、德克萨斯、洛奇希等）、独立 DSH 会话。
 - 联网搜索、网页正文阅读、图片理解、表情包管理（本地 50 张池）。
 - 原生文字、图片、表情包发送（经微信原生通道，非文件转发）。
-- **原生语音发送（M＆I 版本新增）**：模型可调用 `wechat_voice_send` 工具，把文字合成为微信原生
+- **原生语音发送（MI 版本新增）**：模型可调用 `wechat_voice_send` 工具，把文字合成为微信原生
   语音条并发送；送达后即回复文字之后自动落地，群聊与个人均可用。
 - 主动接续回合（轮流互动中自发推进）、上下文压缩、逐聊天开关。
 
@@ -102,7 +102,7 @@ pip install -r resources/project/scripts/reader-requirements.txt
 
 `resources/project/deployment.json` 是**清单**：列出全部可编辑源文件及其 SHA-256（`sourceHashes`）。
 每次应用启动，`resources/app/deployment.cjs` 读取该清单，逐项把模板写入运行工作区
-（`%AppData%/WeChatAgent/workspace`），哈希不同即覆盖。
+（`%AppData%/WeChatAgentMI/workspace`），哈希不同即覆盖。
 
 **因此修改既有功能必须“两边同时改”**，否则重启即被覆盖：
 
@@ -121,7 +121,7 @@ pip install -r resources/project/scripts/reader-requirements.txt
 本目录已是初始化好的 git 仓库（含初始提交）。推送方式：
 
 ```powershell
-cd "WeChatAgent M＆I version"
+cd "WeChatAgent MI version"
 git remote add origin <你的仓库地址>
 git branch -M main
 git push -u origin main

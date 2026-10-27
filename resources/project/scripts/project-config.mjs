@@ -34,7 +34,7 @@ export function validateConfig(config) {
   validateContinuationSettings(config.wechat?.continuation);
   validateContextSettings(config.wechat?.context);
   validateWebReaderSettings(config.wechat?.webReader);
-  if (config.version !== 1) throw new Error('Unsupported WeChatAgent config version');
+  if (config.version !== 1) throw new Error('Unsupported WeChatAgent MI config version');
   if (!['nt', 'bundled', 'existing'].includes(config.runtime?.weflowMode ?? 'nt')) throw new Error('weflowMode must be nt, bundled or existing');
   if (config.runtime?.sender !== 'wechat-hook') throw new Error('sender must be wechat-hook; the UIA sender has been removed');
   if (config.runtime.sender === 'wechat-hook') {
@@ -135,5 +135,5 @@ export function prepare(root = projectRoot) {
   return config;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  prepare(); console.log('WeChatAgent configuration prepared; secrets were not printed.');
+  prepare(); console.log('WeChatAgent MI configuration prepared; secrets were not printed.');
 }
