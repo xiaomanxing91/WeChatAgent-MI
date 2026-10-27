@@ -3,7 +3,7 @@
 > 源码归档仓库（GitHub-ready）。本目录包含 WeChatAgent 桌面端助手的**全部可编辑源码**，
 > 含原生文字 / 表情包 / **图片** / **原生语音发送** 等全部当前功能。
 
-WeChatAgent MI是基于sourcepro5的WeChatAgent项目进行修改的版本，修改的原版本为0.3.7.（原项目地址：https://github.com/sourcepro5/WeChatAgent/）
+WeChatAgent MI（M：Modeification修改，I：Integration整合）是基于sourcepro5的WeChatAgent项目进行修改的版本，修改的原版本为0.3.7.（原项目地址：https://github.com/sourcepro5/WeChatAgent/）
 WeChatAgent 是一个 Windows 桌面 AI 助手：通过注入式原生 Hook（`version.dll`）桥接微信桌面端
 （`Weixin.exe`，已验收版本 `4.1.10.27`），由 Electron 主进程托管控制台与桥接服务，并把社交对话
 交给外部 DSH 智能体（DeepSeek Harness）驱动。用户消息经 OneBot 反向桥接进入社交引擎，模型通过
