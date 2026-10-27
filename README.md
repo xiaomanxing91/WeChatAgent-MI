@@ -43,10 +43,6 @@ WeChatAgent M＆I version/
         ├── package.json  README.md  LICENSE  LICENSES.md  RELEASE_NOTES.md
 ```
 
-> 未包含（且有意排除，见下文“未包含内容”）：`resources/vendor/`（微信客户端、上游 Hook 预编译 DLL、
-> DSH、Python 运行时，约 1.8G）、`resources/runtime/`（约 230M）、`node_modules/`（依赖，随 `npm install`
-> 生成）、`state/`（运行态与用户数据）、真实 `config/wechatagent.json`（密钥，仅示例入库）。
-
 ---
 
 ## 功能特性
